@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Task Feedback - Task Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .feedback-card {
+            transition: transform 0.2s;
+            margin-bottom: 1rem;
+        }
+        .feedback-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .rating-badge {
+            font-size: 0.8rem;
+            padding: 0.35em 0.65em;
+        }
+        .feedback-item {
+            border-left: 4px solid #0d6efd;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .rating-stars {
+            color: #ffc107;
+        }
+        .feedback-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .feedback-item:hover .feedback-actions {
+            opacity: 1;
+        }
+        .rating-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .rating-selector i {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #dee2e6;
+            transition: color 0.2s;
+        }
+        .rating-selector i.active {
+            color: #ffc107;
+        }
+        .rating-selector i:hover {
+            color: #ffc107;
+        }
+        .alert {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-check2-square me-2"></i>Task Management
+            </a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">
+                    <i class="bi bi-person-circle me-1"></i>
+                    <span th:text="${task.user.username}">User</span>
+                </span>
+                <a class="nav-link" th:href="@{/tasks(username=${task.user.username})}">
+                    <i class="bi bi-list-task me-1"></i>Tasks
+                </a>
+                <a class="nav-link" th:href="@{/budget(username=${task.user.username})}">
+                    <i class="bi bi-wallet2 me-1"></i>Budget
+                </a>
+                <a class="nav-link" th:href="@{/user/logout}">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div class="row">
+            <!-- Task Details -->
+            <div class="col-lg-4">
+                <div class="card feedback-card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i>Task Details
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${task.title}">Task Title</h5>
+                        <p class="card-text" th:text="${task.description}">Task Description</p>
+                        <div class="mb-3">
+                            <span class="badge" 
+                                  th:class="${task.status == 'COMPLETED' ? 'bg-success' : 
+                                            task.status == 'IN_PROGRESS' ? 'bg-primary' : 
+                                            'bg-warning'}"
+                                  th:text="${task.status}">Status</span>
+                        </div>
+                        <div class="mb-3">
+                            <span class="badge" 
+                                  th:class="${task.priority == 'High' ? 'bg-danger' : 
+                                            task.priority == 'Medium' ? 'bg-warning' : 
+                                            'bg-success'}"
+                                  th:text="${task.priority}">Priority</span>
+                        </div>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar me-1"></i>
+                                Due Date: <span th:text="${task.dueDate}">Due Date</span>
+                            </small>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Add Feedback Form -->
+                <div class="card feedback-card mt-4" th:if="${canAddFeedback}">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-chat-dots me-2"></i>Add Feedback
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/feedback/add}" method="post">
+                            <input type="hidden" name="taskId" th:value="${task.id}">
+                            <div class="mb-3">
+                                <label class="form-label">Rating</label>
+                                <div class="rating-selector">
+                                    <i class="bi bi-star" data-rating="1"></i>
+                                    <i class="bi bi-star" data-rating="2"></i>
+                                    <i class="bi bi-star" data-rating="3"></i>
+                                    <i class="bi bi-star" data-rating="4"></i>
+                                    <i class="bi bi-star" data-rating="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="rating" value="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Comment</label>
+                                <textarea class="form-control" id="comment" name="comment" rows="3" 
+                                          placeholder="Share your thoughts about this task..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-send me-2"></i>Submit Feedback
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback List -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-chat-square-text me-2"></i>Feedback History
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${feedbacks.empty}" class="text-center py-4">
+                            <i class="bi bi-chat-square-text text-muted" style="font-size: 3rem;"></i>
+                            <p class="mt-3 text-muted">No feedback has been added yet.</p>
+                        </div>
+                        <div th:each="feedback : ${feedbacks}" class="feedback-item">
+                            <div class="feedback-actions">
+                                <button class="btn btn-sm btn-outline-primary me-1" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editFeedbackModal"
+                                        th:attr="data-feedback-id=${feedback.id}, 
+                                                data-feedback-comment=${feedback.comment},
+                                                data-feedback-rating=${feedback.rating}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <form th:action="@{/feedback/delete/{id}(id=${feedback.id})}" 
+                                      method="post" 
+                                      style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="feedback-header">
+                                <div class="rating-stars">
+                                    <i class="bi" th:each="i : ${#numbers.sequence(1, 5)}"
+                                       th:classappend="${i <= feedback.rating ? 'bi-star-fill' : 'bi-star'}"></i>
+                                </div>
+                                <small class="text-muted" th:text="${#temporals.format(feedback.createdAt, 'MMM dd, yyyy HH:mm')}">
+                                    Date
+                                </small>
+                            </div>
+                            <p class="mb-0" th:text="${feedback.comment}">Feedback comment</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Feedback Modal -->
+    <div class="modal fade" id="editFeedbackModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/feedback/edit/{id}(id=0)}" method="post" id="editFeedbackForm">
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-selector">
+                                <i class="bi bi-star" data-rating="1"></i>
+                                <i class="bi bi-star" data-rating="2"></i>
+                                <i class="bi bi-star" data-rating="3"></i>
+                                <i class="bi bi-star" data-rating="4"></i>
+                                <i class="bi bi-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" name="rating" id="editRating" value="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editComment" class="form-label">Comment</label>
+                            <textarea class="form-control" id="editComment" name="comment" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="editFeedbackForm" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Rating selector functionality
+        function setupRatingSelector(selector, input) {
+            const stars = selector.querySelectorAll('i');
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = parseInt(star.dataset.rating);
+                    input.value = rating;
+                    stars.forEach((s, index) => {
+                        s.classList.toggle('active', index < rating);
+                        s.classList.toggle('bi-star-fill', index < rating);
+                        s.classList.toggle('bi-star', index >= rating);
+                    });
+                });
+            });
+        }
+
+        // Setup rating selectors
+        document.addEventListener('DOMContentLoaded', () => {
+            setupRatingSelector(document.querySelector('.rating-selector'), document.getElementById('rating'));
+            
+            // Edit modal setup
+            const editModal = document.getElementById('editFeedbackModal');
+            if (editModal) {
+                editModal.addEventListener('show.bs.modal', event => {
+                    const button = event.relatedTarget;
+                    const feedbackId = button.getAttribute('data-feedback-id');
+                    const comment = button.getAttribute('data-feedback-comment');
+                    const rating = parseInt(button.getAttribute('data-feedback-rating'));
+                    
+                    const form = document.getElementById('editFeedbackForm');
+                    form.action = `/feedback/edit/${feedbackId}`;
+                    document.getElementById('editComment').value = comment;
+                    document.getElementById('editRating').value = rating;
+                    
+                    const stars = editModal.querySelectorAll('.rating-selector i');
+                    stars.forEach((star, index) => {
+                        star.classList.toggle('active', index < rating);
+                        star.classList.toggle('bi-star-fill', index < rating);
+                        star.classList.toggle('bi-star', index >= rating);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register - Task Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .register-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .register-card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background: linear-gradient(45deg, #198754, #20c997);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+        }
+        .btn-register {
+            background: linear-gradient(45deg, #198754, #20c997);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25, 135, 84, 0.3);
+        }
+        .input-group-text {
+            border-radius: 10px 0 0 10px;
+            background-color: #f8f9fa;
+        }
+        .login-link {
+            color: #198754;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .login-link:hover {
+            color: #157347;
+        }
+        .alert {
+            border-radius: 10px;
+        }
+        .password-requirements {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+        .requirement i {
+            margin-right: 0.5rem;
+        }
+        .requirement.valid {
+            color: #198754;
+        }
+        .requirement.invalid {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card register-card">
+                    <div class="card-header text-center">
+                        <h3 class="mb-0">
+                            <i class="bi bi-person-plus me-2"></i>Create Account
+                        </h3>
+                        <p class="mb-0 mt-2">Join us to start managing your tasks</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/user/register}" method="post" id="registerForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label for="username" class="form-label">Username</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="username" name="username" 
+                                               placeholder="Choose a username" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label for="email" class="form-label">Email</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-envelope"></i>
+                                        </span>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               placeholder="Enter your email" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label for="password" class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-lock"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="password" name="password" 
+                                               placeholder="Create a password" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-lock-fill"></i>
+                                        </span>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                               placeholder="Confirm your password" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="password-requirements mb-4">
+                                <p class="mb-2">Password Requirements:</p>
+                                <div class="requirement" id="length">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span>At least 8 characters</span>
+                                </div>
+                                <div class="requirement" id="uppercase">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span>At least one uppercase letter</span>
+                                </div>
+                                <div class="requirement" id="number">
+                                    <i class="bi bi-x-circle"></i>
+                                    <span>At least one number</span>
+                                </div>
+                            </div>
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-register text-white">
+                                    <i class="bi bi-person-plus me-2"></i>Register
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center">
+                            <p class="mb-0">Already have an account? 
+                                <a th:href="@{/user/login}" class="login-link">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                                </a>
+                            </p>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger mt-4" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <span th:text="${error}">Error message</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const requirements = {
+            length: document.getElementById('length'),
+            uppercase: document.getElementById('uppercase'),
+            number: document.getElementById('number')
+        };
+
+        function checkPassword() {
+            const value = password.value;
+            
+            // Check length
+            if (value.length >= 8) {
+                requirements.length.classList.add('valid');
+                requirements.length.classList.remove('invalid');
+                requirements.length.querySelector('i').className = 'bi bi-check-circle';
+            } else {
+                requirements.length.classList.add('invalid');
+                requirements.length.classList.remove('valid');
+                requirements.length.querySelector('i').className = 'bi bi-x-circle';
+            }
+
+            // Check uppercase
+            if (/[A-Z]/.test(value)) {
+                requirements.uppercase.classList.add('valid');
+                requirements.uppercase.classList.remove('invalid');
+                requirements.uppercase.querySelector('i').className = 'bi bi-check-circle';
+            } else {
+                requirements.uppercase.classList.add('invalid');
+                requirements.uppercase.classList.remove('valid');
+                requirements.uppercase.querySelector('i').className = 'bi bi-x-circle';
+            }
+
+            // Check number
+            if (/[0-9]/.test(value)) {
+                requirements.number.classList.add('valid');
+                requirements.number.classList.remove('invalid');
+                requirements.number.querySelector('i').className = 'bi bi-check-circle';
+            } else {
+                requirements.number.classList.add('invalid');
+                requirements.number.classList.remove('valid');
+                requirements.number.querySelector('i').className = 'bi bi-x-circle';
+            }
+        }
+
+        function checkPasswordsMatch() {
+            if (password.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity("Passwords don't match");
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        }
+
+        password.addEventListener('input', checkPassword);
+        confirmPassword.addEventListener('input', checkPasswordsMatch);
+    </script>
+</body>
+</html> 
