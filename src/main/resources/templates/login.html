@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login - Task Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .login-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .btn-login {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+        .input-group-text {
+            border-radius: 10px 0 0 10px;
+            background-color: #f8f9fa;
+        }
+        .register-link {
+            color: #0d6efd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .register-link:hover {
+            color: #0b5ed7;
+        }
+        .alert {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card login-card">
+                    <div class="card-header text-center">
+                        <h3 class="mb-0">
+                            <i class="bi bi-person-circle me-2"></i>Welcome Back
+                        </h3>
+                        <p class="mb-0 mt-2">Sign in to manage your tasks</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/user/login}" method="post">
+                            <div class="mb-4">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-person"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="username" name="username" 
+                                           placeholder="Enter your username" required>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="bi bi-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Enter your password" required>
+                                </div>
+                            </div>
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-login text-white">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center">
+                            <p class="mb-0">Don't have an account? 
+                                <a th:href="@{/user/register}" class="register-link">
+                                    <i class="bi bi-person-plus me-1"></i>Register
+                                </a>
+                            </p>
+                        </div>
+                        <div th:if="${error}" class="alert alert-danger mt-4" role="alert">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <span th:text="${error}">Error message</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
